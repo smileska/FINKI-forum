@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - FINKI Forum{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <i class="fas fa-user-circle fa-5x text-primary mb-3"></i>
+                <h3>{{ user.get_full_name|default:user.username }}</h3>
+                <p class="text-muted">@{{ user.username }}</p>
+
+                <div class="row text-center mb-3">
+                    <div class="col-4">
+                        <h5 class="text-primary">{{ user.profile.reputation }}</h5>
+                        <small class="text-muted">Reputation</small>
+                    </div>
+                    <div class="col-4">
+                        <h5 class="text-success">{{ posts_count }}</h5>
+                        <small class="text-muted">Posts</small>
+                    </div>
+                    <div class="col-4">
+                        <h5 class="text-info">{{ replies_count }}</h5>
+                        <small class="text-muted">Replies</small>
+                    </div>
+                </div>
+
+                <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-graduation-cap me-2"></i>Academic Info
+                </h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Faculty:</strong> {{ user.profile.get_faculty_display }}</p>
+                <p><strong>Year:</strong> {{ user.profile.get_year_display }}</p>
+                {% if user.profile.student_id %}
+                <p><strong>Student ID:</strong> {{ user.profile.student_id }}</p>
+                {% endif %}
+                <p><strong>Member Since:</strong> {{ user.date_joined|date:"F Y" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        {% if user.profile.bio %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>About Me
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>{{ user.profile.bio|linebreaks }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>My Recent Posts
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for post in user_posts %}
+                <div class="border-bottom pb-3 mb-3 {% if forloop.last %}border-0 pb-0 mb-0{% endif %}">
+                    <h6 class="mb-1">
+                        <a href="{% url 'forum:post_detail' post.pk %}" class="text-decoration-none">
+                            {{ post.title }}
+                        </a>
+                    </h6>
+                    <small class="text-muted">
+                        in <a href="{% url 'forum:category_posts' post.category.pk %}">{{ post.category.name }}</a> •
+                        {{ post.created_date|date:"M d, Y H:i" }} •
+                        {{ post.views }} views •
+                        {{ post.get_reply_count }} replies
+                    </small>
+                </div>
+                {% empty %}
+                <p class="text-muted mb-0">You haven't created any posts yet.</p>
+                <a href="{% url 'forum:create_post' %}" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus me-2"></i>Create Your First Post
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-comments me-2"></i>My Recent Replies
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for reply in user_replies %}
+                <div class="border-bottom pb-3 mb-3 {% if forloop.last %}border-0 pb-0 mb-0{% endif %}">
+                    <h6 class="mb-1">
+                        <a href="{% url 'forum:post_detail' reply.post.pk %}#reply-{{ reply.id }}" class="text-decoration-none">
+                            Re: {{ reply.post.title }}
+                        </a>
+                    </h6>
+                    <p class="text-muted mb-1">{{ reply.content|truncatewords:20 }}</p>
+                    <small class="text-muted">
+                        {{ reply.created_date|date:"M d, Y H:i" }}
+                    </small>
+                </div>
+                {% empty %}
+                <p class="text-muted mb-0">You haven't posted any replies yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

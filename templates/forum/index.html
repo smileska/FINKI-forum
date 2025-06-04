@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}FINKI Forum - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4 bg-primary text-white">
+            <div class="card-body">
+                <h1 class="card-title mb-3">
+                    <i class="fas fa-graduation-cap me-2"></i>Welcome to FINKI Forum
+                </h1>
+                <p class="card-text lead">
+                    Connect with fellow students, share knowledge, and discuss academic topics.
+                </p>
+            </div>
+        </div>
+
+        <div class="alert alert-success">
+            <h4><i class="fas fa-check-circle me-2"></i>🎓 Forum is Working!</h4>
+            <p class="mb-0">Your FINKI Forum setup is successful! The basic structure is ready.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-list me-2"></i>Forum Categories
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if categories %}
+                    {% for category in categories %}
+                    <div class="border-bottom pb-3 mb-3">
+                        <h5>
+                            <a href="{% url 'forum:category_posts' category.pk %}" class="text-decoration-none">
+                                {{ category.name }}
+                            </a>
+                        </h5>
+                        <p class="text-muted">{{ category.description }}</p>
+                        <small class="text-info">{{ category.post_count }} posts</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No categories yet</h5>
+                    <p class="text-muted">Categories will appear here once they are created in the admin panel.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clock me-2"></i>Recent Posts
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if recent_posts %}
+                    {% for post in recent_posts %}
+                    <div class="mb-3">
+                        <h6>
+                            <a href="{% url 'forum:post_detail' post.pk %}" class="text-decoration-none">
+                                {{ post.title }}
+                            </a>
+                        </h6>
+                        <small class="text-muted">by {{ post.author.username }}</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <p class="text-muted mb-0">No posts yet.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Forum Stats
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="text-primary">{{ categories.count }}</h4>
+                        <small class="text-muted">Categories</small>
+                    </div>
+                    <div class="col-6">
+                        <h4 class="text-success">{{ recent_posts.count }}</h4>
+                        <small class="text-muted">Posts</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
