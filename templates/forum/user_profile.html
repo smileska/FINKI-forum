@@ -30,6 +30,9 @@
                 <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">
                     <i class="fas fa-edit me-2"></i>Edit Profile
                 </a>
+                <form action="{% url 'accounts:delete_account' %}" method="get" style="margin-top: 2em;">
+                    <button type="submit" class="btn btn-danger">Delete My Account</button>
+                </form>
                 {% endif %}
             </div>
         </div>

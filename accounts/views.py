@@ -4,6 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from forum.models import Post, Reply
 from accounts.models import Profile
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth import logout
 
 # Create your views here.
 
@@ -34,11 +41,50 @@ def register(request):
             first_name=first_name,
             last_name=last_name
         )
+        user.is_active = False
+        user.save()
 
-        messages.success(request, f'Account created for {username}! You can now log in.')
+        token = default_token_generator.make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        activation_link = request.build_absolute_uri(
+            f"/accounts/activate/{uid}/{token}/"
+        )
+
+        subject = 'Activate your account'
+        message = (
+            f'Hi {user.username},\n\n'
+            f'Please click the link below to activate your account:\n{activation_link}\n\n'
+            'If you did not register, please ignore this email.'
+        )
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [user.email]
+        send_mail(subject, message, from_email, recipient_list)
+
+        messages.success(
+            request,
+            f'Account created for {username}! '
+            f'A verification link has been sent to {email}. '
+            'Please check your email and click the link to activate your account before logging in.'
+        )
         return redirect('/accounts/login/')
 
     return render(request, 'accounts/register.html')
+
+def activate_account(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Your account has been activated! You can now log in.')
+        return redirect('/accounts/login/')
+    else:
+        return render(request, 'accounts/activation_invalid.html')
 
 
 @login_required
@@ -117,3 +163,14 @@ def edit_profile(request):
         return redirect('accounts:profile')
 
     return render(request, 'accounts/edit_profile.html')
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, "Your account has been deleted.")
+        return redirect('accounts:login')
+
+    return render(request, 'accounts/delete_account.html')
