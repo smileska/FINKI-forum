@@ -3,129 +3,124 @@
 {% block title %}{{ post.title }} - FINKI Forum{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'forum:index' %}">Home</a></li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'forum:category_posts' post.category.pk %}">{{ post.category.name }}</a>
-                </li>
-                <li class="breadcrumb-item active">{{ post.title|truncatechars:50 }}</li>
-            </ol>
-        </nav>
+<div class="max-w-3xl mx-auto mt-10">
+    <nav class="mb-4" aria-label="breadcrumb">
+        <ol class="flex flex-wrap text-sm text-gray-500 gap-2">
+            <li><a href="{% url 'forum:index' %}" class="hover:underline">Home</a></li>
+            <li>/</li>
+            <li><a href="{% url 'forum:category_posts' post.category.pk %}" class="hover:underline">{{ post.category.name }}</a></li>
+            <li>/</li>
+            <li class="truncate">{{ post.title|truncatechars:50 }}</li>
+        </ol>
+    </nav>
 
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div>
-                    <h2 class="mb-1">{{ post.title }}</h2>
-                    <div class="text-muted small">
-                        <i class="fas fa-eye me-1"></i>{{ post.views }} views •
-                        <i class="fas fa-comments me-1"></i>{{ post.get_reply_count }} replies •
-                        <i class="fas fa-clock me-1"></i>{{ post.created_date|date:"M d, Y H:i" }}
-                        {% if post.is_pinned %}
-                        <span class="badge bg-warning ms-2">
-                            <i class="fas fa-thumbtack me-1"></i>Pinned
+    <div class="bg-white rounded shadow mb-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 border-b">
+            <div>
+                <h2 class="text-2xl font-bold mb-1">{{ post.title }}</h2>
+                <div class="text-gray-500 text-sm flex flex-wrap items-center gap-2">
+                    <span><i class="fas fa-eye mr-1"></i>{{ post.views }} views</span>
+                    <span>•</span>
+                    <span><i class="fas fa-comments mr-1"></i>{{ post.get_reply_count }} replies</span>
+                    <span>•</span>
+                    <span><i class="fas fa-clock mr-1"></i>{{ post.created_date|date:"M d, Y H:i" }}</span>
+                    {% if post.is_pinned %}
+                    <span class="inline-flex items-center bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-1 rounded ml-2">
+                        <i class="fas fa-thumbtack mr-1"></i>Pinned
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% if user == post.author %}
+            <div class="relative">
+                <button class="inline-flex items-center px-3 py-1 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" id="post-options" data-dropdown-toggle="dropdown-menu">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <!-- Dropdown menu logic should be handled by JS or Alpine.js -->
+            </div>
+            {% endif %}
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-12 gap-4">
+                <div class="col-span-12 md:col-span-3 text-center border-r">
+                    <div class="mb-4">
+                        <i class="fas fa-user-circle fa-4x text-muted"></i>
+                    </div>
+                    <h6 class="mb-1">
+                        <a href="{% url 'accounts:user_profile' post.author.username %}" class="text-decoration-none text-blue-600 hover:underline">
+                            {{ post.author.get_full_name|default:post.author.username }}
+                        </a>
+                    </h6>
+                    <small class="text-muted">@{{ post.author.username }}</small><br>
+                    <small class="text-muted">Member since {{ post.author.date_joined|date:"M Y" }}</small>
+                    <div class="mt-2">
+                        <span class="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
+                            {{ post.author.profile.reputation }} rep
                         </span>
-                        {% endif %}
                     </div>
                 </div>
-                {% if user == post.author %}
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'forum:edit_post' post.pk %}">
-                            <i class="fas fa-edit me-2"></i>Edit
-                        </a></li>
-                        <li><a class="dropdown-item text-danger" href="{% url 'forum:delete_post' post.pk %}">
-                            <i class="fas fa-trash me-2"></i>Delete
-                        </a></li>
-                    </ul>
-                </div>
-                {% endif %}
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2 text-center border-end">
-                        <div class="mb-2">
-                            <i class="fas fa-user-circle fa-4x text-muted"></i>
-                        </div>
-                        <h6 class="mb-1">
-                            <a href="{% url 'accounts:user_profile' post.author.username %}" class="text-decoration-none">
-                                {{ post.author.get_full_name|default:post.author.username }}
-                            </a>
-                        </h6>
-                        <small class="text-muted">@{{ post.author.username }}</small><br>
-                        <small class="text-muted">Member since {{ post.author.date_joined|date:"M Y" }}</small>
-                        <div class="mt-2">
-                            <span class="badge bg-primary">{{ post.author.profile.reputation }} rep</span>
-                        </div>
+                <div class="col-span-12 md:col-span-9">
+                    <div class="post-content mb-4">
+                        {{ post.content|linebreaks }}
                     </div>
-                    <div class="col-md-10">
-                        <div class="post-content">
-                            {{ post.content|linebreaks }}
-                        </div>
-                        {% if post.updated_date != post.created_date %}
-                        <small class="text-muted">
-                            <em>Last edited {{ post.updated_date|date:"M d, Y H:i" }}</em>
-                        </small>
-                        {% endif %}
-                    </div>
+                    {% if post.updated_date != post.created_date %}
+                    <small class="text-muted">
+                        <em>Last edited {{ post.updated_date|date:"M d, Y H:i" }}</em>
+                    </small>
+                    {% endif %}
                 </div>
             </div>
         </div>
-
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4 class="mb-0">
-                    <i class="fas fa-comments me-2"></i>Replies ({{ post.get_reply_count }})
-                </h4>
-            </div>
-            <div class="card-body" id="replies-container">
-                {% for reply in replies %}
-                {% include 'forum/reply_template.html' with reply=reply depth=0 %}
-                {% empty %}
-                <div class="text-center py-5">
-                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No replies yet</h5>
-                    <p class="text-muted">Be the first to respond!</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        {% if user.is_authenticated and not post.is_closed %}
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">
-                    <i class="fas fa-reply me-2"></i>Post a Reply
-                </h5>
-            </div>
-            <div class="card-body">
-                <form method="post" id="main-reply-form">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        {{ reply_form.content }}
-                    </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-paper-plane me-2"></i>Post Reply
-                    </button>
-                </form>
-            </div>
-        </div>
-        {% elif not user.is_authenticated %}
-        <div class="card">
-            <div class="card-body text-center">
-                <p class="mb-3">You must be logged in to post replies.</p>
-                <a href="{% url 'accounts:login' %}" class="btn btn-primary">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
-                </a>
-            </div>
-        </div>
-        {% endif %}
     </div>
+
+    <div class="bg-white rounded shadow mb-4">
+        <div class="p-6 border-b">
+            <h4 class="text-lg font-semibold mb-0">
+                <i class="fas fa-comments me-2"></i>Replies ({{ post.get_reply_count }})
+            </h4>
+        </div>
+        <div class="p-6" id="replies-container">
+            {% for reply in replies %}
+            {% include 'forum/reply_template.html' with reply=reply depth=0 %}
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No replies yet</h5>
+                <p class="text-muted">Be the first to respond!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if user.is_authenticated and not post.is_closed %}
+    <div class="bg-white rounded shadow">
+        <div class="p-6 border-b">
+            <h5 class="text-lg font-semibold mb-0">
+                <i class="fas fa-reply me-2"></i>Post a Reply
+            </h5>
+        </div>
+        <div class="p-6">
+            <form method="post" id="main-reply-form">
+                {% csrf_token %}
+                <div class="mb-4">
+                    {{ reply_form.content }}
+                </div>
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded shadow hover:bg-blue-700 transition-all duration-200">
+                    <i class="fas fa-paper-plane me-2"></i>Post Reply
+                </button>
+            </form>
+        </div>
+    </div>
+    {% elif not user.is_authenticated %}
+    <div class="bg-white rounded shadow">
+        <div class="p-6 text-center">
+            <p class="mb-4">You must be logged in to post replies.</p>
+            <a href="{% url 'accounts:login' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded shadow hover:bg-blue-700 transition-all duration-200">
+                <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <style>

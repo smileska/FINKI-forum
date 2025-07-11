@@ -3,92 +3,85 @@
 {% block title %}Edit Profile - FINKI Forum{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title mb-0">
-                    <i class="fas fa-edit me-2"></i>Edit Profile
-                </h3>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    
-                    <h5 class="mb-3">Personal Information</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">First Name</label>
-                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Bio</label>
-                        <textarea name="bio" class="form-control" rows="4" placeholder="Tell us about yourself...">{{ user.profile.bio }}</textarea>
-                    </div>
-                    
-                    <h5 class="mb-3 mt-4">Academic Information</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Faculty</label>
-                                <select name="faculty" class="form-control">
-                                    <option value="KN" {% if user.profile.faculty == 'KN' %}selected{% endif %}>Computer Science</option>
-                                    <option value="SIIS" {% if user.profile.faculty == 'SIIS' %}selected{% endif %}>Software Engineering And Information Systems</option>
-                                    <option value="IMB" {% if user.profile.faculty == 'IMB' %}selected{% endif %}>Internet, Networks and Security</option>
-                                    <option value="KI" {% if user.profile.faculty == 'KI' %}selected{% endif %}>Computer Engineering</option>
-                                    <option value="PIT" {% if user.profile.faculty == 'PIT' %}selected{% endif %}>Appliance of Information Technology</option>
-                                    <option value="KE" {% if user.profile.faculty == 'KE' %}selected{% endif %}>Computer Education</option>
-                                    <option value="OTHER" {% if user.profile.faculty == 'OTHER' %}selected{% endif %}>Other</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Year</label>
-                                <select name="year" class="form-control">
-                                    <option value="1" {% if user.profile.year == 1 %}selected{% endif %}>First Year</option>
-                                    <option value="2" {% if user.profile.year == 2 %}selected{% endif %}>Second Year</option>
-                                    <option value="3" {% if user.profile.year == 3 %}selected{% endif %}>Third Year</option>
-                                    <option value="4" {% if user.profile.year == 4 %}selected{% endif %}>Fourth Year</option>
-                                    <option value="5" {% if user.profile.year == 5 %}selected{% endif %}>Fourth Year+</option>
-                                    <option value="6" {% if user.profile.year == 6 %}selected{% endif %}>Graduate</option>
-                                    <option value="7" {% if user.profile.year == 7 %}selected{% endif %}>Masters</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Student ID</label>
-                        <input type="text" name="student_id" class="form-control" value="{{ user.profile.student_id }}" placeholder="Your student ID">
-                    </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'accounts:profile' %}" class="btn btn-secondary me-md-2">
-                            <i class="fas fa-times me-2"></i>Cancel
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Save Changes
-                        </button>
-                    </div>
-                </form>
-            </div>
+<div class="max-w-2xl mx-auto mt-10">
+    <div class="bg-white rounded shadow p-8">
+        <div class="mb-6 border-b pb-4 flex items-center justify-between">
+            <h3 class="text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-edit"></i>
+                Edit Profile
+            </h3>
         </div>
+        <form method="post">
+            {% csrf_token %}
+            <h5 class="text-lg font-semibold mb-3">Personal Information</h5>
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">First Name</label>
+                        <input type="text" name="first_name" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value="{{ user.first_name }}">
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">Last Name</label>
+                        <input type="text" name="last_name" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value="{{ user.last_name }}">
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-1">Email</label>
+                <input type="email" name="email" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value="{{ user.email }}" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-1">Bio</label>
+                <textarea name="bio" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="4" placeholder="Tell us about yourself...">{{ user.profile.bio }}</textarea>
+            </div>
+            <h5 class="text-lg font-semibold mb-3 mt-4">Academic Information</h5>
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">Faculty</label>
+                        <select name="faculty" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="KN" {% if user.profile.faculty == 'KN' %}selected{% endif %}>Computer Science</option>
+                            <option value="SIIS" {% if user.profile.faculty == 'SIIS' %}selected{% endif %}>Software Engineering And Information Systems</option>
+                            <option value="IMB" {% if user.profile.faculty == 'IMB' %}selected{% endif %}>Internet, Networks and Security</option>
+                            <option value="KI" {% if user.profile.faculty == 'KI' %}selected{% endif %}>Computer Engineering</option>
+                            <option value="PIT" {% if user.profile.faculty == 'PIT' %}selected{% endif %}>Appliance of Information Technology</option>
+                            <option value="KE" {% if user.profile.faculty == 'KE' %}selected{% endif %}>Computer Education</option>
+                            <option value="OTHER" {% if user.profile.faculty == 'OTHER' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">Year</label>
+                        <select name="year" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="1" {% if user.profile.year == 1 %}selected{% endif %}>First Year</option>
+                            <option value="2" {% if user.profile.year == 2 %}selected{% endif %}>Second Year</option>
+                            <option value="3" {% if user.profile.year == 3 %}selected{% endif %}>Third Year</option>
+                            <option value="4" {% if user.profile.year == 4 %}selected{% endif %}>Fourth Year</option>
+                            <option value="5" {% if user.profile.year == 5 %}selected{% endif %}>Fourth Year+</option>
+                            <option value="6" {% if user.profile.year == 6 %}selected{% endif %}>Graduate</option>
+                            <option value="7" {% if user.profile.year == 7 %}selected{% endif %}>Masters</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-1">Student ID</label>
+                <input type="text" name="student_id" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value="{{ user.profile.student_id }}" placeholder="Your student ID">
+            </div>
+            <div class="flex justify-end gap-2">
+                <a href="{% url 'accounts:profile' %}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                    <i class="fas fa-times mr-2"></i>
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Changes
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
