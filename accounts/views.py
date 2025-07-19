@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -141,27 +143,49 @@ def edit_profile(request):
         request.user.last_name = request.POST.get('last_name', '')
         request.user.email = request.POST.get('email', '')
         request.user.save()
+
         try:
             if hasattr(request.user, 'profile'):
-                request.user.profile.bio = request.POST.get('bio', '')
-                request.user.profile.year = int(request.POST.get('year', 1))
-                request.user.profile.faculty = request.POST.get('faculty', 'KN')
-                request.user.profile.student_id = request.POST.get('student_id', '')
-                request.user.profile.save()
+                profile = request.user.profile
             else:
-                Profile.objects.create(
-                    user=request.user,
-                    bio=request.POST.get('bio', ''),
-                    year=int(request.POST.get('year', 1)),
-                    faculty=request.POST.get('faculty', 'KN'),
-                    student_id=request.POST.get('student_id', '')
-                )
+                profile = Profile.objects.create(user=request.user)
+
+            profile.bio = request.POST.get('bio', '')
+            profile.year = int(request.POST.get('year', 1))
+            profile.faculty = request.POST.get('faculty', 'KN')
+            profile.student_id = request.POST.get('student_id', '')
+
+            if 'avatar' in request.FILES and request.FILES['avatar']:
+                avatar_file = request.FILES['avatar']
+
+                if avatar_file.size > 5 * 1024 * 1024:
+                    messages.error(request, 'Profile picture must be smaller than 5MB.')
+                    return render(request, 'accounts/edit_profile.html')
+
+                allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+                if avatar_file.content_type not in allowed_types:
+                    messages.error(request, 'Please upload a valid image file (JPEG, PNG, or GIF).')
+                    return render(request, 'accounts/edit_profile.html')
+
+                if profile.avatar and hasattr(profile.avatar, 'path'):
+                    if 'default.png' not in profile.avatar.name:
+                        try:
+                            if os.path.exists(profile.avatar.path):
+                                os.remove(profile.avatar.path)
+                        except:
+                            pass
+                profile.avatar = avatar_file
+                print(f"Avatar uploaded: {avatar_file.name}")
+
+            profile.save()
+            print(f"Profile saved. Avatar: {profile.avatar}")
+
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('accounts:profile')
+
         except Exception as e:
+            print(f"Error updating profile: {e}")
             messages.error(request, f'Error updating profile: {str(e)}')
-
-        messages.success(request, 'Your profile has been updated successfully!')
-        return redirect('accounts:profile')
-
     return render(request, 'accounts/edit_profile.html')
 
 @login_required
