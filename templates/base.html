@@ -36,39 +36,104 @@
             </ul>
             <ul class="flex items-center gap-4">
                 {% if user.is_authenticated %}
-                    <li class="relative group">
-                        <a class="flex items-center gap-1 hover:underline" href="#">
+                    <li class="relative">
+                        <button id="user-menu-button" class="flex items-center gap-1 hover:underline focus:outline-none">
                             <i class="fas fa-user"></i>{{ user.username }}
-                        </a>
-                        <div class="absolute right-0 hidden bg-white text-black shadow-lg group-hover:block">
-                            <a class="block px-4 py-2 hover:bg-gray-100" href="{% url 'accounts:profile' %}">
-                                <i class="fas fa-user-circle mr-2"></i>Profile
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div id="user-menu" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden z-50">
+                            <a class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2" href="{% url 'accounts:profile' %}">
+                                <i class="fas fa-user-circle"></i>My Profile
                             </a>
-                            <div class="h-px bg-gray-200"></div>
+                            <a class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2" href="{% url 'accounts:edit_profile' %}">
+                                <i class="fas fa-edit"></i>Edit Profile
+                            </a>
+                            <div class="border-t border-gray-200"></div>
                             <form action="{% url 'accounts:logout' %}" method="post" class="m-0">
                                 {% csrf_token %}
-                                <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+                                    <i class="fas fa-sign-out-alt"></i>Logout
                                 </button>
                             </form>
                         </div>
                     </li>
                 {% else %}
                     <li>
-                        <a class="hover:underline" href="{% url 'accounts:login' %}">
+                        <a class="hover:underline flex items-center gap-1" href="{% url 'accounts:login' %}">
                             <i class="fas fa-sign-in-alt"></i>Login
                         </a>
                     </li>
                     <li>
-                        <a class="hover:underline" href="{% url 'accounts:register' %}">
+                        <a class="hover:underline flex items-center gap-1" href="{% url 'accounts:register' %}">
                             <i class="fas fa-user-plus"></i>Register
                         </a>
                     </li>
                 {% endif %}
             </ul>
         </div>
+
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-blue-700 border-t border-blue-600">
+            <div class="px-4 py-2 space-y-2">
+                <a class="block py-2 hover:underline" href="{% url 'forum:index' %}">
+                    <i class="fas fa-home mr-2"></i>Home
+                </a>
+                {% if user.is_authenticated %}
+                    <a class="block py-2 hover:underline" href="{% url 'forum:create_post' %}">
+                        <i class="fas fa-plus mr-2"></i>New Post
+                    </a>
+                    <a class="block py-2 hover:underline" href="{% url 'accounts:profile' %}">
+                        <i class="fas fa-user-circle mr-2"></i>My Profile
+                    </a>
+                    <a class="block py-2 hover:underline" href="{% url 'accounts:edit_profile' %}">
+                        <i class="fas fa-edit mr-2"></i>Edit Profile
+                    </a>
+                    <form action="{% url 'accounts:logout' %}" method="post" class="py-2">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full text-left hover:underline">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a class="block py-2 hover:underline" href="{% url 'accounts:login' %}">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </a>
+                    <a class="block py-2 hover:underline" href="{% url 'accounts:register' %}">
+                        <i class="fas fa-user-plus mr-2"></i>Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const navbarToggle = document.getElementById('navbar-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (navbarToggle && mobileMenu) {
+        navbarToggle.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    const userMenuButton = document.getElementById('user-menu-button');
+    const userMenu = document.getElementById('user-menu');
+
+    if (userMenuButton && userMenu) {
+        userMenuButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+    }
+});
+</script>
 
 <div class="container mx-auto mt-4 px-4">
     {% if messages %}
