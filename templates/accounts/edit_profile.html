@@ -3,92 +3,45 @@
 {% block title %}Edit Profile - FINKI Forum{% endblock %}
 
 {% block content %}
-<div class="max-w-3xl mx-auto mt-10">
-    <div class="bg-white rounded-lg shadow-md p-8">
+<div class="max-w-2xl mx-auto mt-10">
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
         <div class="mb-6 border-b pb-4 flex items-center justify-between">
-            <h3 class="text-2xl font-bold flex items-center gap-2">
-                <i class="fas fa-edit text-blue-600"></i>
+            <h3 class="text-2xl font-bold flex items-center gap-2 text-neutral-800">
+                <i class="fas fa-edit text-blue-400"></i>
                 Edit Profile
             </h3>
-            <a href="{% url 'accounts:profile' %}" class="text-gray-600 hover:text-gray-800">
-                <i class="fas fa-arrow-left mr-1"></i>Back to Profile
-            </a>
         </div>
-
-        <form method="post" enctype="multipart/form-data">
+        <form method="post">
             {% csrf_token %}
-
-            <div class="mb-8">
-                <h5 class="text-lg font-semibold mb-4">Profile Picture</h5>
-                <div class="flex items-center space-x-6">
-                    <div class="flex-shrink-0">
-                        {% if user.profile.avatar %}
-                            <img src="{{ user.profile.avatar.url }}" alt="{{ user.username }}"
-                                 class="w-20 h-20 rounded-full object-cover border-4 border-gray-200">
-                        {% else %}
-                            <div class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center border-4 border-gray-200">
-                                <i class="fas fa-user text-gray-600 text-2xl"></i>
-                            </div>
-                        {% endif %}
+            <h5 class="text-lg font-bold mb-3 text-neutral-800">Personal Information</h5>
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">First Name</label>
+                        <input type="text" name="first_name" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium" value="{{ user.first_name }}">
                     </div>
-                    <div class="flex-1">
-                        <input type="file" name="avatar" accept="image/*"
-                               class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <p class="text-sm text-gray-500 mt-1">
-                            Choose a new profile picture. Recommended size: 400x400px. Max file size: 5MB.
-                        </p>
+                </div>
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">Last Name</label>
+                        <input type="text" name="last_name" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium" value="{{ user.last_name }}">
                     </div>
                 </div>
             </div>
-
-            <div class="mb-8">
-                <h5 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fas fa-user mr-2 text-blue-600"></i>Personal Information
-                </h5>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2">First Name</label>
-                        <input type="text" name="first_name"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               value="{{ user.first_name }}" placeholder="Enter your first name">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2">Last Name</label>
-                        <input type="text" name="last_name"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                               value="{{ user.last_name }}" placeholder="Enter your last name">
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="block text-gray-700 font-medium mb-2">Email Address</label>
-                    <input type="email" name="email"
-                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           value="{{ user.email }}" required placeholder="Enter your email address">
-                </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-1">Email</label>
+                <input type="email" name="email" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium" value="{{ user.email }}" required>
             </div>
-
-            <div class="mb-8">
-                <h5 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fas fa-info-circle mr-2 text-blue-600"></i>About Me
-                </h5>
-                <div>
-                    <label class="block text-gray-700 font-medium mb-2">Bio</label>
-                    <textarea name="bio" rows="4"
-                              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              placeholder="Tell us about yourself, your interests, goals, etc...">{{ user.profile.bio }}</textarea>
-                    <p class="text-sm text-gray-500 mt-1">Maximum 500 characters</p>
-                </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-1">Bio</label>
+                <textarea name="bio" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium" rows="4" placeholder="Tell us about yourself...">{{ user.profile.bio }}</textarea>
             </div>
-
-            <div class="mb-8">
-                <h5 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fas fa-graduation-cap mr-2 text-blue-600"></i>Academic Information
-                </h5>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2">Faculty</label>
-                        <select name="faculty"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <h5 class="text-lg font-bold mb-3 mt-4 text-neutral-800">Academic Information</h5>
+            <div class="flex flex-wrap -mx-2">
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">Faculty</label>
+                        <select name="faculty" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium">
                             <option value="KN" {% if user.profile.faculty == 'KN' %}selected{% endif %}>Computer Science</option>
                             <option value="SIIS" {% if user.profile.faculty == 'SIIS' %}selected{% endif %}>Software Engineering And Information Systems</option>
                             <option value="IMB" {% if user.profile.faculty == 'IMB' %}selected{% endif %}>Internet, Networks and Security</option>
@@ -98,10 +51,11 @@
                             <option value="OTHER" {% if user.profile.faculty == 'OTHER' %}selected{% endif %}>Other</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2">Year of Study</label>
-                        <select name="year"
-                                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="w-full md:w-1/2 px-2">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-1">Year</label>
+                        <select name="year" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium">
                             <option value="1" {% if user.profile.year == 1 %}selected{% endif %}>First Year</option>
                             <option value="2" {% if user.profile.year == 2 %}selected{% endif %}>Second Year</option>
                             <option value="3" {% if user.profile.year == 3 %}selected{% endif %}>Third Year</option>
@@ -112,23 +66,19 @@
                         </select>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <label class="block text-gray-700 font-medium mb-2">Student ID (Optional)</label>
-                    <input type="text" name="student_id"
-                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           value="{{ user.profile.student_id }}" placeholder="Enter your student ID">
-                    <p class="text-sm text-gray-500 mt-1">This will only be visible to you on your profile</p>
-                </div>
             </div>
-
-            <div class="flex justify-end gap-3 pt-4 border-t">
-                <a href="{% url 'accounts:profile' %}"
-                   class="inline-flex items-center px-6 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition duration-200">
-                    <i class="fas fa-times mr-2"></i>Cancel
+            <div class="mb-4">
+                <label class="block text-gray-700 font-medium mb-1">Student ID</label>
+                <input type="text" name="student_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium" value="{{ user.profile.student_id }}" placeholder="Your student ID">
+            </div>
+            <div class="flex justify-end gap-2">
+                <a href="{% url 'accounts:profile' %}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300">
+                    <i class="fas fa-times mr-2"></i>
+                    Cancel
                 </a>
-                <button type="submit"
-                        class="inline-flex items-center px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition duration-200">
-                    <i class="fas fa-save mr-2"></i>Save Changes
+                <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Changes
                 </button>
             </div>
         </form>
