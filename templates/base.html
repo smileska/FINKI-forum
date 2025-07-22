@@ -8,19 +8,20 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
-<body>
-<nav class="bg-blue-700 text-white px-4 py-3 shadow">
+<body class="bg-[#f7f9fc] min-h-screen">
+<nav class="bg-gradient-to-r from-blue-900 to-blue-400 text-white px-4 py-3 shadow-lg">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
-        <a class="flex items-center gap-2 font-bold text-lg" href="{% url 'forum:index' %}">
-            <i class="fas fa-graduation-cap"></i>FINKI Forum
+        <a class="flex items-center gap-2 font-bold text-2xl tracking-tight hover:scale-105 transition-transform duration-200" href="{% url 'forum:index' %}">
+            <i class="fas fa-graduation-cap"></i>
+            <span class="font-extrabold">FINKI Forum</span>
         </a>
         <div class="md:hidden">
             <button id="navbar-toggle" class="focus:outline-none">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-        <div class="hidden md:flex items-center gap-6" id="navbarNav">
-            <ul class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-8" id="navbarNav">
+            <ul class="flex items-center gap-6">
                 <li>
                     <a class="hover:underline flex items-center gap-1" href="{% url 'forum:index' %}">
                         <i class="fas fa-home"></i>Home
@@ -34,113 +35,46 @@
                     </li>
                 {% endif %}
             </ul>
-            <ul class="flex items-center gap-4">
+            <ul class="flex items-center gap-6">
                 {% if user.is_authenticated %}
-                    <li class="relative">
-                        <button id="user-menu-button" class="flex items-center gap-1 hover:underline focus:outline-none">
+                    <li>
+                        <a class="flex items-center gap-1 hover:underline" href="{% url 'accounts:user_profile' user.username %}">
                             <i class="fas fa-user"></i>{{ user.username }}
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </button>
-                        <div id="user-menu" class="absolute right-0 mt-2 w-48 bg-white text-gray-800 shadow-lg rounded-md hidden z-50">
-                            <a class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2" href="{% url 'accounts:profile' %}">
-                                <i class="fas fa-user-circle"></i>My Profile
-                            </a>
-                            <a class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2" href="{% url 'accounts:edit_profile' %}">
-                                <i class="fas fa-edit"></i>Edit Profile
-                            </a>
-                            <div class="border-t border-gray-200"></div>
-                            <form action="{% url 'accounts:logout' %}" method="post" class="m-0">
-                                {% csrf_token %}
-                                <button type="submit" class="block w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
-                                    <i class="fas fa-sign-out-alt"></i>Logout
-                                </button>
-                            </form>
-                        </div>
+                        </a>
+                    </li>
+                    <li>
+                        <form action="{% url 'accounts:logout' %}" method="post" class="m-0">
+                            {% csrf_token %}
+                            <button type="submit" class="flex items-center gap-1 px-4 py-2 hover:bg-[#f0f4fa] rounded transition">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </form>
                     </li>
                 {% else %}
                     <li>
-                        <a class="hover:underline flex items-center gap-1" href="{% url 'accounts:login' %}">
+                        <a class="hover:underline" href="{% url 'accounts:login' %}">
                             <i class="fas fa-sign-in-alt"></i>Login
                         </a>
                     </li>
                     <li>
-                        <a class="hover:underline flex items-center gap-1" href="{% url 'accounts:register' %}">
+                        <a class="hover:underline" href="{% url 'accounts:register' %}">
                             <i class="fas fa-user-plus"></i>Register
                         </a>
                     </li>
                 {% endif %}
             </ul>
         </div>
-
-        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-blue-700 border-t border-blue-600">
-            <div class="px-4 py-2 space-y-2">
-                <a class="block py-2 hover:underline" href="{% url 'forum:index' %}">
-                    <i class="fas fa-home mr-2"></i>Home
-                </a>
-                {% if user.is_authenticated %}
-                    <a class="block py-2 hover:underline" href="{% url 'forum:create_post' %}">
-                        <i class="fas fa-plus mr-2"></i>New Post
-                    </a>
-                    <a class="block py-2 hover:underline" href="{% url 'accounts:profile' %}">
-                        <i class="fas fa-user-circle mr-2"></i>My Profile
-                    </a>
-                    <a class="block py-2 hover:underline" href="{% url 'accounts:edit_profile' %}">
-                        <i class="fas fa-edit mr-2"></i>Edit Profile
-                    </a>
-                    <form action="{% url 'accounts:logout' %}" method="post" class="py-2">
-                        {% csrf_token %}
-                        <button type="submit" class="w-full text-left hover:underline">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                        </button>
-                    </form>
-                {% else %}
-                    <a class="block py-2 hover:underline" href="{% url 'accounts:login' %}">
-                        <i class="fas fa-sign-in-alt mr-2"></i>Login
-                    </a>
-                    <a class="block py-2 hover:underline" href="{% url 'accounts:register' %}">
-                        <i class="fas fa-user-plus mr-2"></i>Register
-                    </a>
-                {% endif %}
-            </div>
-        </div>
     </div>
 </nav>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const navbarToggle = document.getElementById('navbar-toggle');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    if (navbarToggle && mobileMenu) {
-        navbarToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
-
-    const userMenuButton = document.getElementById('user-menu-button');
-    const userMenu = document.getElementById('user-menu');
-
-    if (userMenuButton && userMenu) {
-        userMenuButton.addEventListener('click', function(e) {
-            e.stopPropagation();
-            userMenu.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
-                userMenu.classList.add('hidden');
-            }
-        });
-    }
-});
-</script>
-
-<div class="container mx-auto mt-4 px-4">
+<div class="max-w-6xl mx-auto mt-6 px-4">
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <div class="rounded-lg shadow-md mb-4 px-6 py-3 bg-white border-l-4 border-[#4992d4] text-[#2e3185] flex items-center justify-between">
+                <span>{{ message }}</span>
+                <button type="button" class="ml-4 text-[#4992d4] hover:text-[#2e3185]" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
         {% endfor %}
     {% endif %}
@@ -149,10 +83,15 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-    document.getElementById('navbar-toggle').addEventListener('click', function () {
-        const navbarNav = document.getElementById('navbarNav');
-        navbarNav.classList.toggle('hidden');
-        navbarNav.classList.toggle('flex');
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggle = document.getElementById('navbar-toggle');
+        var navbarNav = document.getElementById('navbarNav');
+        if (toggle && navbarNav) {
+            toggle.addEventListener('click', function () {
+                navbarNav.classList.toggle('hidden');
+                navbarNav.classList.toggle('flex');
+            });
+        }
     });
 </script>
 </body>
