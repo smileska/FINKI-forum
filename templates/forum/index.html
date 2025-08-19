@@ -3,43 +3,39 @@
 {% block title %}FINKI Forum - Home{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto mt-10">
-    <div class="bg-blue-600 text-white rounded shadow p-8 mb-6">
-        <h1 class="text-2xl font-bold mb-3 flex items-center gap-2">
-            <i class="fas fa-graduation-cap"></i>Welcome to FINKI Forum
-        </h1>
-        <p class="text-lg">Connect with fellow students, share knowledge, and discuss academic topics.</p>
-    </div>
+<div class="min-h-screen bg-white flex flex-col">
+      <header class="w-full pt-8 pb-4 flex flex-col items-center">
+    <h1 class="text-5xl font-extrabold text-[#2c307a] tracking-tight mb-3 text-center">FINKI Forum</h1>
+    <p class="italic text-[#2993d1] text-xl text-center max-w-lg mx-auto mb-4">
+      <span class="font-semibold">Connect, share, and discuss</span> with fellow students.<br>
+      <span class="text-[#2c307a] text-lg font-medium">Your academic community, always open.</span>
+    </p>
+  </header>
 
-    <div class="bg-green-100 border border-green-300 text-green-800 rounded p-6 mb-6">
-        <h4 class="text-xl font-semibold mb-2 flex items-center gap-2">
-            <i class="fas fa-check-circle"></i>🎓 Forum is Working!
-        </h4>
-        <p class="mb-0">Your FINKI Forum setup is successful! The basic structure is ready.</p>
-    </div>
-
-    <div class="bg-white rounded shadow mb-6">
-        <div class="p-6 border-b">
-            <h3 class="text-lg font-semibold mb-0 flex items-center gap-2">
-                <i class="fas fa-list"></i>Forum Categories
-            </h3>
+  <main class="flex-1 w-full flex flex-col items-center mt-2">
+    <div class="bg-white rounded-2xl border border-[#2993d1]/10 shadow-xl p-6 max-w-4xl w-full mx-auto">
+      <h2 class="text-xl font-semibold text-[#2993d1] mb-4 text-center tracking-tight">Categories</h2>
+      <div class="overflow-y-auto" style="max-height: 340px;">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 justify-center">
+          {% if categories %}
+            {% for category in categories %}
+            <a href="{% url 'forum:category_posts' category.pk %}" class="group">
+              <div class="flex flex-col gap-2 px-6 py-6 rounded-xl border border-[#2993d1] bg-white transition hover:border-[#2993d1] hover:bg-[#2993d1]/10 shadow-sm hover:shadow-lg cursor-pointer items-center text-center">
+                <span class="text-lg font-semibold text-blue-900 group-hover:text-blue-400">{{ category.name }}</span>
+                <span class="text-blue-400 text-sm italic">{{ category.description }}</span>
+                <i class="fas fa-folder-open text-blue-900 text-xl mt-2"></i>
+              </div>
+            </a>
+            {% endfor %}
+          {% else %}
+            <div class="flex flex-col items-center text-gray-400 py-8 col-span-full">
+              <i class="fas fa-folder-open text-xl mb-2"></i>
+              <span class="text-sm">No categories available.</span>
+            </div>
+          {% endif %}
         </div>
-        <div class="p-6">
-            {% if categories %}
-                {% for category in categories %}
-                <div class="border-b pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
-                    <h5>
-                        <a href="{% url 'forum:category_posts' category.pk %}" class="text-blue-600 hover:underline">
-                            {{ category.name }}
-                        </a>
-                    </h5>
-                    <p class="text-gray-500 mb-0">{{ category.description }}</p>
-                </div>
-                {% endfor %}
-            {% else %}
-                <p class="text-gray-500">No categories available.</p>
-            {% endif %}
-        </div>
+      </div>
     </div>
+  </main>
 </div>
 {% endblock %}

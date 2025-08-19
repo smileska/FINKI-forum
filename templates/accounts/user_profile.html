@@ -4,12 +4,6 @@
 
 {% block content %}
 <div class="max-w-6xl mx-auto">
-    <div class="mb-4">
-        <a href="javascript:history.back()" class="inline-flex items-center text-gray-600 hover:text-gray-800">
-            <i class="fas fa-arrow-left mr-2"></i>Back
-        </a>
-    </div>
-
     <div class="flex flex-col lg:flex-row gap-8">
         <div class="w-full lg:w-1/3">
             <div class="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
@@ -23,26 +17,10 @@
                         </div>
                     {% endif %}
                 </div>
-
                 <h3 class="text-xl font-bold text-gray-800 mb-1">
                     {{ profile_user.get_full_name|default:profile_user.username }}
                 </h3>
                 <p class="text-gray-500 mb-4">@{{ profile_user.username }}</p>
-
-                <div class="mb-4">
-                    {% if profile_user.last_login %}
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <i class="fas fa-circle text-green-400 mr-1"></i>
-                            Last seen {{ profile_user.last_login|timesince }} ago
-                        </span>
-                    {% else %}
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                            <i class="fas fa-circle text-gray-400 mr-1"></i>
-                            Never logged in
-                        </span>
-                    {% endif %}
-                </div>
-
                 <div class="grid grid-cols-3 gap-4 mb-6">
                     <div class="text-center">
                         <div class="text-2xl font-bold text-blue-600">{{ profile_user.profile.reputation }}</div>
@@ -57,135 +35,40 @@
                         <div class="text-xs text-gray-500">Replies</div>
                     </div>
                 </div>
-
                 {% if is_own_profile %}
                 <div class="space-y-2">
                     <a href="{% url 'accounts:edit_profile' %}"
                        class="w-full inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
                         <i class="fas fa-edit mr-2"></i>Edit Profile
                     </a>
+                    <a href="{% url 'accounts:delete_account' %}"
+                       class="w-full inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                        <i class="fas fa-trash mr-2"></i>Delete Account
+                    </a>
                 </div>
                 {% endif %}
             </div>
-
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h4 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fas fa-graduation-cap mr-2 text-blue-600"></i>Academic Info
-                </h4>
-                <div class="space-y-3 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Faculty:</span>
-                        <span class="font-medium">{{ profile_user.profile.get_faculty_display }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Year:</span>
-                        <span class="font-medium">{{ profile_user.profile.get_year_display }}</span>
-                    </div>
-                    {% if profile_user.profile.student_id and is_own_profile %}
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Student ID:</span>
-                        <span class="font-medium">{{ profile_user.profile.student_id }}</span>
-                    </div>
-                    {% endif %}
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Member Since:</span>
-                        <span class="font-medium">{{ profile_user.date_joined|date:"M Y" }}</span>
-                    </div>
-                </div>
-            </div>
         </div>
-
         <div class="w-full lg:w-2/3">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h5 class="text-xl font-bold text-neutral-800 flex items-center gap-2 mb-4">
+                    <i class="fas fa-graduation-cap text-blue-400"></i>Academic Info
+                </h5>
+                <p><strong class="text-neutral-800">Faculty:</strong> <span class="text-gray-600">{{ profile_user.profile.get_faculty_display }}</span></p>
+                <p><strong class="text-neutral-800">Year:</strong> <span class="text-gray-600">{{ profile_user.profile.get_year_display }}</span></p>
+                {% if profile_user.profile.student_id and is_own_profile %}
+                <p><strong class="text-neutral-800">Student ID:</strong> <span class="text-gray-600">{{ profile_user.profile.student_id }}</span></p>
+                {% endif %}
+                <p><strong class="text-neutral-800">Member Since:</strong> <span class="text-gray-600">{{ profile_user.date_joined|date:"F Y" }}</span></p>
+            </div>
             {% if profile_user.profile.bio %}
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h4 class="text-lg font-semibold mb-4 flex items-center">
-                    <i class="fas fa-info-circle mr-2 text-blue-600"></i>
-                    About {{ profile_user.get_full_name|default:profile_user.username }}
-                </h4>
-                <div class="text-gray-700">
-                    {{ profile_user.profile.bio|linebreaks }}
-                </div>
+                <h5 class="text-xl font-bold text-neutral-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-blue-400"></i>Bio
+                </h5>
+                <p class="text-gray-700 whitespace-pre-line">{{ profile_user.profile.bio }}</p>
             </div>
             {% endif %}
-
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-lg font-semibold flex items-center">
-                        <i class="fas fa-list mr-2 text-green-600"></i>Recent Posts
-                    </h4>
-                    {% if posts_count > 5 %}
-                        <span class="text-gray-500 text-sm">Showing 5 of {{ posts_count }}</span>
-                    {% endif %}
-                </div>
-
-                {% for post in user_posts %}
-                <div class="border-b border-gray-200 py-4 {% if forloop.last %}border-0{% endif %}">
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-file-alt text-gray-400"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h6 class="text-blue-600 font-medium hover:underline">
-                                <a href="{% url 'forum:post_detail' post.pk %}">{{ post.title }}</a>
-                            </h6>
-                            <div class="flex items-center text-sm text-gray-500 mt-1 space-x-4">
-                                <span>
-                                    <i class="fas fa-folder mr-1"></i>
-                                    <a href="{% url 'forum:category_posts' post.category.pk %}" class="text-blue-500 hover:underline">
-                                        {{ post.category.name }}
-                                    </a>
-                                </span>
-                                <span><i class="fas fa-clock mr-1"></i>{{ post.created_date|date:"M d, Y" }}</span>
-                                <span><i class="fas fa-eye mr-1"></i>{{ post.views }} views</span>
-                                <span><i class="fas fa-comments mr-1"></i>{{ post.get_reply_count }} replies</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="text-center py-8">
-                    <i class="fas fa-file-alt text-gray-300 text-4xl mb-3"></i>
-                    <p class="text-gray-500">No posts yet.</p>
-                </div>
-                {% endfor %}
-            </div>
-
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-lg font-semibold flex items-center">
-                        <i class="fas fa-comments mr-2 text-purple-600"></i>Recent Replies
-                    </h4>
-                    {% if replies_count > 5 %}
-                        <span class="text-gray-500 text-sm">Showing 5 of {{ replies_count }}</span>
-                    {% endif %}
-                </div>
-
-                {% for reply in user_replies %}
-                <div class="border-b border-gray-200 py-4 {% if forloop.last %}border-0{% endif %}">
-                    <div class="flex items-start space-x-3">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-reply text-gray-400"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h6 class="text-blue-600 font-medium hover:underline">
-                                <a href="{% url 'forum:post_detail' reply.post.pk %}#reply-{{ reply.id }}">
-                                    Re: {{ reply.post.title }}
-                                </a>
-                            </h6>
-                            <p class="text-gray-700 mt-1 text-sm">{{ reply.content|truncatewords:15 }}</p>
-                            <div class="flex items-center text-sm text-gray-500 mt-2">
-                                <span><i class="fas fa-clock mr-1"></i>{{ reply.created_date|date:"M d, Y H:i" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="text-center py-8">
-                    <i class="fas fa-comments text-gray-300 text-4xl mb-3"></i>
-                    <p class="text-gray-500">No replies yet.</p>
-                </div>
-                {% endfor %}
-            </div>
         </div>
     </div>
 </div>

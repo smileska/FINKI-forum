@@ -4,28 +4,28 @@
 
 {% block content %}
 <div class="max-w-3xl mx-auto mt-10">
-    <nav class="mb-4" aria-label="breadcrumb">
-        <ol class="flex flex-wrap text-sm text-gray-500 gap-2">
+    <nav class="mb-6" aria-label="breadcrumb">
+        <ol class="flex flex-wrap text-sm text-blue-400 gap-2">
             <li><a href="{% url 'forum:index' %}" class="hover:underline">Home</a></li>
             <li>/</li>
             <li><a href="{% url 'forum:category_posts' post.category.pk %}" class="hover:underline">{{ post.category.name }}</a></li>
             <li>/</li>
-            <li class="truncate">{{ post.title|truncatechars:50 }}</li>
+            <li class="truncate text-blue-900">{{ post.title|truncatechars:50 }}</li>
         </ol>
     </nav>
 
-    <div class="bg-white rounded shadow mb-4">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 border-b">
+    <div class="bg-white rounded-2xl shadow-xl border border-blue-400/20 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-8 border-b border-blue-400/10">
             <div>
-                <h2 class="text-2xl font-bold mb-1">{{ post.title }}</h2>
-                <div class="text-gray-500 text-sm flex flex-wrap items-center gap-2">
+                <h2 class="text-3xl font-extrabold text-blue-900 mb-2">{{ post.title }}</h2>
+                <div class="text-blue-400 text-sm flex flex-wrap items-center gap-3">
                     <span><i class="fas fa-eye mr-1"></i>{{ post.views }} views</span>
                     <span>•</span>
                     <span><i class="fas fa-comments mr-1"></i>{{ post.get_reply_count }} replies</span>
                     <span>•</span>
                     <span><i class="fas fa-clock mr-1"></i>{{ post.created_date|date:"M d, Y H:i" }}</span>
                     {% if post.is_pinned %}
-                    <span class="inline-flex items-center bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-1 rounded ml-2">
+                    <span class="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-1 rounded ml-2">
                         <i class="fas fa-thumbtack mr-1"></i>Pinned
                     </span>
                     {% endif %}
@@ -33,26 +33,25 @@
             </div>
             {% if user == post.author %}
             <div class="relative">
-                <button class="inline-flex items-center px-3 py-1 border border-gray-300 rounded bg-white text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500" id="post-options" data-dropdown-toggle="dropdown-menu">
+                <button class="inline-flex items-center px-3 py-1 border border-blue-400 rounded-lg bg-white text-blue-900 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400" id="post-options" data-dropdown-toggle="dropdown-menu">
                     <i class="fas fa-ellipsis-v"></i>
                 </button>
-                <!-- Dropdown menu logic should be handled by JS or Alpine.js -->
             </div>
             {% endif %}
         </div>
-        <div class="p-6">
-            <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-12 md:col-span-3 text-center border-r">
+        <div class="p-8">
+            <div class="grid grid-cols-12 gap-6">
+                <div class="col-span-12 md:col-span-3 text-center border-r border-blue-100">
                     <div class="mb-4">
-                        <i class="fas fa-user-circle fa-4x text-muted"></i>
+                        <i class="fas fa-user-circle fa-4x text-blue-400"></i>
                     </div>
                     <h6 class="mb-1">
-                        <a href="{% url 'accounts:user_profile' post.author.username %}" class="text-decoration-none text-blue-600 hover:underline">
+                        <a href="{% url 'accounts:user_profile' post.author.username %}" class="text-blue-900 font-bold hover:underline">
                             {{ post.author.get_full_name|default:post.author.username }}
                         </a>
                     </h6>
-                    <small class="text-muted">@{{ post.author.username }}</small><br>
-                    <small class="text-muted">Member since {{ post.author.date_joined|date:"M Y" }}</small>
+                    <small class="text-blue-400">@{{ post.author.username }}</small><br>
+                    <small class="text-blue-400">Member since {{ post.author.date_joined|date:"M Y" }}</small>
                     <div class="mt-2">
                         <span class="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded">
                             {{ post.author.profile.reputation }} rep
@@ -60,11 +59,11 @@
                     </div>
                 </div>
                 <div class="col-span-12 md:col-span-9">
-                    <div class="post-content mb-4">
+                    <div class="post-content mb-4 text-blue-900 text-base">
                         {{ post.content|linebreaks }}
                     </div>
                     {% if post.updated_date != post.created_date %}
-                    <small class="text-muted">
+                    <small class="text-blue-400">
                         <em>Last edited {{ post.updated_date|date:"M d, Y H:i" }}</em>
                     </small>
                     {% endif %}
@@ -73,50 +72,50 @@
         </div>
     </div>
 
-    <div class="bg-white rounded shadow mb-4">
-        <div class="p-6 border-b">
-            <h4 class="text-lg font-semibold mb-0">
-                <i class="fas fa-comments me-2"></i>Replies ({{ post.get_reply_count }})
+    <div class="bg-white rounded-2xl shadow-xl border border-blue-400/20 mb-6">
+        <div class="p-8 border-b border-blue-400/10">
+            <h4 class="text-2xl font-bold text-blue-900 mb-0 flex items-center gap-2">
+                <i class="fas fa-comments"></i>Replies ({{ post.get_reply_count }})
             </h4>
         </div>
-        <div class="p-6" id="replies-container">
+        <div class="p-8" id="replies-container">
             {% for reply in replies %}
             {% include 'forum/reply_template.html' with reply=reply depth=0 %}
             {% empty %}
             <div class="text-center py-5">
-                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                <h5 class="text-muted">No replies yet</h5>
-                <p class="text-muted">Be the first to respond!</p>
+                <i class="fas fa-comments fa-3x text-blue-400 mb-3"></i>
+                <h5 class="text-blue-400">No replies yet</h5>
+                <p class="text-blue-400">Be the first to respond!</p>
             </div>
             {% endfor %}
         </div>
     </div>
 
     {% if user.is_authenticated and not post.is_closed %}
-    <div class="bg-white rounded shadow">
-        <div class="p-6 border-b">
-            <h5 class="text-lg font-semibold mb-0">
-                <i class="fas fa-reply me-2"></i>Post a Reply
+    <div class="bg-white rounded-2xl shadow-xl border border-blue-400/20 mb-6">
+        <div class="p-8 border-b border-blue-400/10">
+            <h5 class="text-xl font-bold text-blue-900 mb-0 flex items-center gap-2">
+                <i class="fas fa-reply"></i>Post a Reply
             </h5>
         </div>
-        <div class="p-6">
+        <div class="p-8">
             <form method="post" id="main-reply-form">
                 {% csrf_token %}
                 <div class="mb-4">
                     {{ reply_form.content }}
                 </div>
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded shadow hover:bg-blue-700 transition-all duration-200">
-                    <i class="fas fa-paper-plane me-2"></i>Post Reply
+                <button type="submit" class="inline-flex items-center px-6 py-2 bg-gradient-to-r from-blue-900 to-blue-400 text-white font-bold rounded-lg shadow hover:scale-105 transition">
+                    <i class="fas fa-paper-plane mr-2"></i>Post Reply
                 </button>
             </form>
         </div>
     </div>
     {% elif not user.is_authenticated %}
-    <div class="bg-white rounded shadow">
-        <div class="p-6 text-center">
-            <p class="mb-4">You must be logged in to post replies.</p>
-            <a href="{% url 'accounts:login' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded shadow hover:bg-blue-700 transition-all duration-200">
-                <i class="fas fa-sign-in-alt me-2"></i>Login
+    <div class="bg-white rounded-2xl shadow-xl border border-blue-400/20 mt-8">
+        <div class="p-8 text-center">
+            <p class="mb-4 text-blue-900 text-lg font-semibold">You must be logged in to post replies.</p>
+            <a href="{% url 'accounts:login' %}" class="inline-flex items-center px-5 py-2 bg-gradient-to-r from-blue-900 to-blue-400 text-white font-bold rounded-lg shadow hover:scale-105 transition">
+                <i class="fas fa-sign-in-alt mr-2"></i>Login
             </a>
         </div>
     </div>
@@ -130,108 +129,50 @@
 }
 
 .reply-content-wrapper {
-    border: 1px solid #dee2e6;
-    border-radius: 0.375rem;
-    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    background-color: #fff;
     padding: 1rem;
     transition: box-shadow 0.2s ease;
 }
-
 .reply-content-wrapper:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
-
-.nested-reply-1 {
+.nested-reply-1, .nested-reply-2, .nested-reply-3, .nested-reply-4, .nested-reply-5 {
     margin-left: 2rem;
-    border-left: 3px solid #0d6efd;
+    border-left: none;
     padding-left: 1rem;
 }
-
-.nested-reply-2 {
-    margin-left: 4rem;
-    border-left: 3px solid #198754;
-    padding-left: 1rem;
-}
-
-.nested-reply-3 {
-    margin-left: 6rem;
-    border-left: 3px solid #fd7e14;
-    padding-left: 1rem;
-}
-
-.nested-reply-4 {
-    margin-left: 8rem;
-    border-left: 3px solid #dc3545;
-    padding-left: 1rem;
-}
-
-.nested-reply-5 {
-    margin-left: 10rem;
-    border-left: 3px solid #6f42c1;
-    padding-left: 1rem;
-}
-
-.nested-reply-1 .reply-content-wrapper {
-    background-color: #f8f9fa;
-    border-left: 4px solid #0d6efd;
-}
-
-.nested-reply-2 .reply-content-wrapper {
-    background-color: #f1f8ff;
-    border-left: 4px solid #198754;
-}
-
-.nested-reply-3 .reply-content-wrapper {
-    background-color: #fff8f1;
-    border-left: 4px solid #fd7e14;
-}
-
-.nested-reply-4 .reply-content-wrapper {
-    background-color: #fff1f1;
-    border-left: 4px solid #dc3545;
-}
-
+.nested-reply-1 .reply-content-wrapper,
+.nested-reply-2 .reply-content-wrapper,
+.nested-reply-3 .reply-content-wrapper,
+.nested-reply-4 .reply-content-wrapper,
 .nested-reply-5 .reply-content-wrapper {
-    background-color: #f8f1ff;
-    border-left: 4px solid #6f42c1;
+    background-color: #fff;
+    border-left: none;
 }
 
-.reply-btn {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+.text-blue-900 {
+    color: #22223b !important;
 }
 
-.reply-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.text-blue-400 {
+    color: #6c7a89 !important;
 }
 
-.collapse {
-    transition: all 0.35s ease;
+.bg-blue-100 {
+    background-color: #f3f4f6 !important;
+    color: #22223b !important;
 }
 
-a.text-primary {
-    font-weight: 600;
-    text-decoration: none !important;
+.border-blue-400\/20 {
+    border-color: #e5e7eb !important;
 }
 
-a.text-primary:hover {
-    text-decoration: underline !important;
+.bg-gradient-to-r.from-blue-900.to-blue-400 {
+    background: linear-gradient(90deg, #22223b 0%, #4992d4 100%) !important;
 }
 
-.nested-reply::before {
-    content: '';
-    position: absolute;
-    left: -1rem;
-    top: 0;
-    width: 20px;
-    height: 30px;
-    border-left: 2px solid #6c757d;
-    border-bottom: 2px solid #6c757d;
-    border-bottom-left-radius: 10px;
-}
 
 @media (max-width: 768px) {
     .nested-reply-1, .nested-reply-2, .nested-reply-3,
